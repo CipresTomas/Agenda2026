@@ -1,0 +1,45 @@
+<main class="contact-page">
+	<section class="contact-panel">
+		<header class="contact-header">
+			<div>
+
+				<h1>Contactos</h1>
+			  	<p class="subtitle">agenda by tomas cipres </p>
+			</div>
+		</header>
+
+		<form class="contact-form" (ngSubmit)="agregarcontacto()">
+			<div class="field-group">
+				<label for="name">Nombre</label>
+				<input id="name" name="name" type="text" [(ngModel)]="name" placeholder="Ej. Juan Perez" required />
+			</div>
+			<div class="field-group">
+				<label for="email">Email</label>
+				<input id="email" name="email" type="email" [(ngModel)]="email" placeholder="juan@email.com" required />
+			</div>
+			<div class="field-group">
+				<label for="phone">Telefono</label>
+				<input id="phone" name="phone" type="tel" [(ngModel)]="phone" placeholder="11 1234 5678" required />
+			</div>
+			<button type="submit">Agregar contacto</button>
+		</form>
+
+		@if (contactos.length > 0) {
+			<h2 class="list-title">Contactos agregados</h2>
+			<div class="contact-grid">
+				@for (contacto of contactos; track $index) {
+					<article class="contact-card">
+						<div class="avatar">{{ contacto.name.charAt(0) }}</div>
+						<div>
+							<h3>{{ contacto.name }}</h3>
+							<p>{{ contacto.email }}</p>
+							<p>{{ contacto.phone }}</p>
+						</div>
+					</article>
+				}
+			</div>
+		} @else {
+			<p class="empty-state">Todavía no agregaste contactos.</p>
+		}
+	</section>
+</main>

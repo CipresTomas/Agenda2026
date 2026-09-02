@@ -1,10 +1,12 @@
 <form action="">
   <h1>Register</h1>
+  <label for="username">Nombre y Apellido:</label>
+  <input type="text" name="username" id="username" placeholder="Enter your username" title="Username" />
   <label for="email">Email:</label>
   <input type="email" name="email" id="email" placeholder="Enter your email" title="Email address" />
   <label for="password">Password:</label>
   <input type="password" name="password" id="password" placeholder="Enter your password" title="Password" />
   <label for="confirm-password">Confirm Password:</label>
   <input type="password" name="confirm-password" id="confirm-password" placeholder="Confirm your password" title="Confirm Password" />
-  <button type="submit">Register</button>
+  <button type="button" routerLink="/login">Register</button>
 </form>
