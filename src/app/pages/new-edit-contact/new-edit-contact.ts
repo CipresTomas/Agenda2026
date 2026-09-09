@@ -21,6 +21,7 @@ export class NewEditContact implements OnInit {
   company = '';
   imgurl = '';
   isFavorite = false;
+  imagenPreview = '';
 
   constructor(
     private contactService: ContactService,
@@ -45,7 +46,23 @@ export class NewEditContact implements OnInit {
     this.address = this.contacto.address;
     this.company = this.contacto.company;
     this.imgurl = this.contacto.imgurl;
+    this.imagenPreview = this.contacto.imgurl;
     this.isFavorite = this.contacto.isFavorite;
+  }
+
+  seleccionarImagen(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const archivo = input.files?.[0];
+    if (!archivo || !archivo.type.startsWith('image/')) {
+      return;
+    }
+
+    const lector = new FileReader();
+    lector.onload = () => {
+      this.imgurl = lector.result as string;
+      this.imagenPreview = this.imgurl;
+    };
+    lector.readAsDataURL(archivo);
   }
 
   guardar(form: NgForm): void {

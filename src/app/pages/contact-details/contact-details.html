@@ -7,7 +7,11 @@
 		</header>
 
 		<section class="profile">
-			<div class="avatar">{{ contactoSeleccionado.name.charAt(0).toUpperCase() }}</div>
+			@if (contactoSeleccionado.imgurl && !imagenError) {
+				<img class="contact-image" [src]="contactoSeleccionado.imgurl" [alt]="'Foto de ' + contactoSeleccionado.name" (error)="mostrarAvatar()" />
+			} @else {
+				<div class="avatar">{{ contactoSeleccionado.name.charAt(0).toUpperCase() }}</div>
+			}
 			<div class="profile-copy">
 				<p class="eyebrow">DETALLE DEL CONTACTO</p>
 				<h1>{{ contactoSeleccionado.name }}</h1>

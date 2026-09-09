@@ -74,6 +74,17 @@
   box-shadow: 0 0.75rem 1.5rem rgba(251, 113, 133, 0.25);
 }
 
+.contact-image {
+  display: block;
+  width: 5rem;
+  height: 5rem;
+  flex: 0 0 auto;
+  border: 4px solid #fef08a;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0.75rem 1.5rem rgba(251, 113, 133, 0.25);
+}
+
 .eyebrow {
   margin: 0 0 0.5rem;
 }
@@ -81,7 +92,6 @@
 h1 {
   margin: 0;
   font-size: clamp(2rem, 6vw, 3.25rem);
-  line-height: 1;
   background: linear-gradient(100deg, #7c3aed, #fb7185);
   -webkit-background-clip: text;
   background-clip: text;

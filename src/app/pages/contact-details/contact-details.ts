@@ -11,6 +11,7 @@ import { Contact, ContactService } from '../../services/contact.service';
 export class ContactDetails implements OnInit {
   idContacto = input<string>();
   contacto: Contact | undefined;
+  imagenError = false;
 
   constructor(
     private contactService: ContactService,
@@ -20,6 +21,10 @@ export class ContactDetails implements OnInit {
   ngOnInit(): void {
     const id = this.idContacto();
     this.contacto = id ? this.contactService.obtenerPorId(Number(id)) : undefined;
+  }
+
+  mostrarAvatar(): void {
+    this.imagenError = true;
   }
 
   alternarFavorito(): void {
