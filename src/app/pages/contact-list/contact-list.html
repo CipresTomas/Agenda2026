@@ -2,39 +2,25 @@
 	<section class="contact-panel">
 		<header class="contact-header">
 			<div>
-
 				<h1>Contactos</h1>
-			  	<p class="subtitle">agenda by tomas cipres </p>
+			  	<p class="subtitle">Tu agenda personal</p>
 			</div>
+			<a routerLink="/contacts/new">Nuevo contacto +</a>
+			<button type="button" (click)="cerrarSesion()">Cerrar sesión</button>
 		</header>
-
-		<form class="contact-form" (ngSubmit)="agregarcontacto()">
-			<div class="field-group">
-				<label for="name">Nombre</label>
-				<input id="name" name="name" type="text" [(ngModel)]="name" placeholder="Ej. Juan Perez" required />
-			</div>
-			<div class="field-group">
-				<label for="email">Email</label>
-				<input id="email" name="email" type="email" [(ngModel)]="email" placeholder="juan@email.com" required />
-			</div>
-			<div class="field-group">
-				<label for="phone">Telefono</label>
-				<input id="phone" name="phone" type="tel" [(ngModel)]="phone" placeholder="11 1234 5678" required />
-			</div>
-			<button type="submit">Agregar contacto</button>
-		</form>
 
 		@if (contactos.length > 0) {
 			<h2 class="list-title">Contactos agregados</h2>
 			<div class="contact-grid">
-				@for (contacto of contactos; track $index) {
+				@for (contacto of contactos; track contacto.id) {
 					<article class="contact-card">
-						<div class="avatar">{{ contacto.name.charAt(0) }}</div>
+						<div class="avatar">{{ contacto.name.charAt(0).toUpperCase() }}</div>
 						<div>
-							<h3>{{ contacto.name }}</h3>
+							<h3><a [routerLink]="['/contacts', contacto.id]">{{ contacto.name }}</a> @if (contacto.isFavorite) { <span>⭐</span> }</h3>
 							<p>{{ contacto.email }}</p>
 							<p>{{ contacto.phone }}</p>
 						</div>
+						<a [routerLink]="['/contacts', contacto.id, 'edit']">Editar</a>
 					</article>
 				}
 			</div>

@@ -1,0 +1,57 @@
+
+@if (contacto; as contactoSeleccionado) {
+	<main class="contact-details">
+		<header class="details-header">
+			<a class="back-link" routerLink="/contact-list">← Volver a contactos</a>
+			<span class="contact-number">Contacto #{{ contactoSeleccionado.id }}</span>
+		</header>
+
+		<section class="profile">
+			<div class="avatar">{{ contactoSeleccionado.name.charAt(0).toUpperCase() }}</div>
+			<div class="profile-copy">
+				<p class="eyebrow">DETALLE DEL CONTACTO</p>
+				<h1>{{ contactoSeleccionado.name }}</h1>
+
+				@if (contactoSeleccionado.isFavorite) {
+					<span class="favorite-badge">⭐ Favorito</span>
+				}
+			</div>
+		</section>
+
+		<section class="contact-info">
+			<div class="info-item">
+				<span class="info-label">Email</span>
+				<strong>{{ contactoSeleccionado.email || 'Sin email' }}</strong>
+			</div>
+			<div class="info-item">
+				<span class="info-label">Telefono</span>
+				<strong>{{ contactoSeleccionado.phone || 'Sin telefono' }}</strong>
+			</div>
+			@if (contactoSeleccionado.address) {
+				<div class="info-item">
+					<span class="info-label">Direccion</span>
+					<strong>{{ contactoSeleccionado.address }}</strong>
+				</div>
+			}
+			@if (contactoSeleccionado.company) {
+				<div class="info-item">
+					<span class="info-label">Empresa</span>
+					<strong>{{ contactoSeleccionado.company }}</strong>
+				</div>
+			}
+		</section>
+
+		<footer class="actions">
+			<button class="favorite-button" type="button" (click)="alternarFavorito()">
+				{{ contactoSeleccionado.isFavorite ? 'Quitar favorito' : 'Marcar favorito' }}
+			</button>
+			<a class="edit-button" [routerLink]="['/contacts', contactoSeleccionado.id, 'edit']">Editar contacto</a>
+			<button class="delete-button" type="button" (click)="eliminar()">Eliminar</button>
+		</footer>
+	</main>
+} @else {
+	<main class="contact-details empty-details">
+		<h1>Contacto no encontrado</h1>
+		<a class="back-link" routerLink="/contact-list">Volver a contactos</a>
+	</main>
+}
