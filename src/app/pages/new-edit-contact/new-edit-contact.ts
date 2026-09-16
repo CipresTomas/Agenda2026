@@ -9,6 +9,7 @@ import { Contact, ContactService } from '../../services/contact.service';
   styleUrl: '../contact-list/contact-list.scss',
   templateUrl: './new-edit-contact.html',
 })
+//no entendi muy bien las signal pero lo hice asi:
 export class NewEditContact implements OnInit {
   idContacto = input<string>();
   contacto: Contact | undefined;
