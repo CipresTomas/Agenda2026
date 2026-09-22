@@ -12,42 +12,42 @@
       <a routerLink="/contact-list">Volver</a>
     </header>
 
-    <form class="contact-form" #contactForm="ngForm" (ngSubmit)="guardar(contactForm)">
+    <form class="contact-form" (submit)="guardar($event)">
       <div class="field-group">
         <label for="name">Nombre*</label>
-        <input id="name" name="name" type="text" [(ngModel)]="name" minlength="2" required />
+        <input id="name" type="text" [formField]="contactForm.name" />
       </div>
       <div class="field-group">
         <label for="phone">Telefono*</label>
-        <input id="phone" name="phone" type="tel" [(ngModel)]="phone" required />
+        <input id="phone" type="tel" [formField]="contactForm.phone" />
       </div>
       <div class="field-group">
         <label for="email">Email</label>
-        <input id="email" name="email" type="email" [(ngModel)]="email" />
+        <input id="email" type="email" [formField]="contactForm.email" />
       </div>
       <div class="field-group">
         <label for="address">Direccion</label>
-        <input id="address" name="address" type="text" [(ngModel)]="address" />
+        <input id="address" type="text" [formField]="contactForm.address" />
       </div>
       <div class="field-group">
         <label for="company">Empresa</label>
-        <input id="company" name="company" type="text" [(ngModel)]="company" />
+        <input id="company" type="text" [formField]="contactForm.company" />
       </div>
       <div class="field-group">
         <label for="imgurl">URL de imagen</label>
-        <input id="imgurl" name="imgurl" type="url" [(ngModel)]="imgurl" />
+        <input id="imgurl" type="url" [formField]="contactForm.imgurl" />
       </div>
       <div class="field-group">
         <label for="image-file">O seleccioná una imagen</label>
         <input id="image-file" type="file" accept="image/*" (change)="seleccionarImagen($event)" />
       </div>
-      @if (imagenPreview) {
-        <img class="image-preview" width="96" height="96" [src]="imagenPreview" alt="Vista previa de la imagen" />
+      @if (imagenPreview()) {
+        <img class="image-preview" width="96" height="96" [src]="imagenPreview()" alt="Vista previa de la imagen" />
       }
       <label>
-        <input name="isFavorite" type="checkbox" [(ngModel)]="isFavorite" /> Favorito
+        <input type="checkbox" [formField]="contactForm.isFavorite" /> Favorito
       </label>
-      @if (error) {
+      @if (error()) {
         <p class="empty-state">Completá el nombre y el teléfono.</p>
       }
       <button type="submit">{{ contacto ? 'Editar' : 'Agregar' }}</button>

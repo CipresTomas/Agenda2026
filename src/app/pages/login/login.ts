@@ -1,26 +1,26 @@
-import { Component } from '@angular/core';
-import { FormsModule, NgForm } from '@angular/forms';
+import { Component, inject, signal } from '@angular/core';
+import { form, FormField } from '@angular/forms/signals';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 @Component({
-  imports: [FormsModule, RouterLink],
+  imports: [FormField, RouterLink],
   selector: 'app-login',
   styleUrl: './login.scss',
   templateUrl: './login.html',
 })
 export class Login {
-  errorLogin = false;
+  readonly loginModel = signal({ email: '', password: '' });
+  readonly loginForm = form(this.loginModel);
+  readonly errorLogin = signal(false);
 
-  constructor(
-    private authService: AuthService,
-    private router: Router,
-  ) {}
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
-  iniciarSesion(form: NgForm): void {
-    this.errorLogin = false;
-    const { email, password } = form.value;
+  iniciarSesion(): void {
+    this.errorLogin.set(false);
+    const { email, password } = this.loginModel();
     if (!email || !password || !this.authService.iniciarSesion(email, password)) {
-      this.errorLogin = true;
+      this.errorLogin.set(true);
       return;
     }
 

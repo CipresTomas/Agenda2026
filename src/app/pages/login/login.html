@@ -1,10 +1,10 @@
-<form #loginForm="ngForm" (ngSubmit)="iniciarSesion(loginForm)">
+<form novalidate (submit)="iniciarSesion(); $event.preventDefault()">
   <h1>Iniciar sesión</h1>
   <label for="email">Correo electrónico:</label>
-  <input type="email" name="email" id="email" placeholder="tu@email.com" title="Correo electrónico" ngModel required />
+  <input type="email" id="email" placeholder="tu@email.com" title="Correo electrónico" [formField]="loginForm.email" />
   <label for="password">Contraseña:</label>
-  <input type="password" name="password" id="password" placeholder="Tu contraseña" title="Contraseña" ngModel minlength="4" required />
-  @if (errorLogin) {
+  <input type="password" id="password" placeholder="Tu contraseña" title="Contraseña" [formField]="loginForm.password" />
+  @if (errorLogin()) {
     <p>Datos incorrectos. Revisá tu correo y contraseña.</p>
   }
   <button type="submit">Iniciar sesión</button>

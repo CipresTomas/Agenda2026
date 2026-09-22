@@ -1,28 +1,30 @@
-import { Component, input, OnInit } from '@angular/core';
-import { FormsModule, NgForm } from '@angular/forms';
+import { Component, computed, input, OnInit, signal } from '@angular/core';
+import { form, FormField } from '@angular/forms/signals';
 import { RouterModule, Router } from '@angular/router';
 import { Contact, ContactService } from '../../services/contact.service';
 
 @Component({
-  imports: [FormsModule, RouterModule],
+  imports: [FormField, RouterModule],
   selector: 'app-new-edit-contact',
   styleUrl: '../contact-list/contact-list.scss',
   templateUrl: './new-edit-contact.html',
 })
-//no entendi muy bien las signal pero lo hice asi:
 export class NewEditContact implements OnInit {
   idContacto = input<string>();
   contacto: Contact | undefined;
-  error = false;
+  readonly error = signal(false);
 
-  name = '';
-  email = '';
-  phone = '';
-  address = '';
-  company = '';
-  imgurl = '';
-  isFavorite = false;
-  imagenPreview = '';
+  readonly contactModel = signal<Omit<Contact, 'id'>>({
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    company: '',
+    imgurl: '',
+    isFavorite: false,
+  });
+  readonly contactForm = form(this.contactModel);
+  readonly imagenPreview = computed(() => this.contactModel().imgurl);
 
   constructor(
     private contactService: ContactService,
@@ -41,14 +43,8 @@ export class NewEditContact implements OnInit {
       return;
     }
 
-    this.name = this.contacto.name;
-    this.email = this.contacto.email;
-    this.phone = this.contacto.phone;
-    this.address = this.contacto.address;
-    this.company = this.contacto.company;
-    this.imgurl = this.contacto.imgurl;
-    this.imagenPreview = this.contacto.imgurl;
-    this.isFavorite = this.contacto.isFavorite;
+    const { id: _id, ...datos } = this.contacto;
+    this.contactModel.set(datos);
   }
 
   seleccionarImagen(event: Event): void {
@@ -60,36 +56,37 @@ export class NewEditContact implements OnInit {
 
     const lector = new FileReader();
     lector.onload = () => {
-      this.imgurl = lector.result as string;
-      this.imagenPreview = this.imgurl;
+      this.contactModel.update((contacto) => ({ ...contacto, imgurl: lector.result as string }));
     };
     lector.readAsDataURL(archivo);
   }
 
-  guardar(form: NgForm): void {
-    this.error = false;
-    if (form.invalid) {
-      this.error = true;
+  guardar(event: Event): void {
+    event.preventDefault();
+    this.error.set(false);
+    const datos = this.contactModel();
+    if (!datos.name.trim() || datos.name.trim().length < 2 || !datos.phone.trim()) {
+      this.error.set(true);
       return;
     }
 
-    const datos = {
-      name: this.name.trim(),
-      email: this.email.trim(),
-      phone: this.phone.trim(),
-      address: this.address.trim(),
-      company: this.company.trim(),
-      imgurl: this.imgurl.trim(),
-      isFavorite: this.isFavorite,
+    const contacto = {
+      ...datos,
+      name: datos.name.trim(),
+      email: datos.email.trim(),
+      phone: datos.phone.trim(),
+      address: datos.address.trim(),
+      company: datos.company.trim(),
+      imgurl: datos.imgurl.trim(),
     };
 
     if (this.contacto) {
-      this.contactService.editar({ ...datos, id: this.contacto.id });
+      this.contactService.editar({ ...contacto, id: this.contacto.id });
       this.router.navigate(['/contacts', this.contacto.id]);
       return;
     }
 
-    const nuevoContacto = this.contactService.agregar(datos);
+    const nuevoContacto = this.contactService.agregar(contacto);
     this.router.navigate(['/contacts', nuevoContacto.id]);
   }
 }
