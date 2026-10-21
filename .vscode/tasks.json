@@ -37,6 +37,31 @@
           }
         }
       }
+    },
+    {
+      "label": "API: iniciar backend Agenda",
+      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "..\\AgendaApi\\API\\AgendaApi.csproj",
+        "--urls",
+        "http://localhost:5000"
+      ],
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "agenda-api",
+        "pattern": {
+          "regexp": "^(.*)$",
+          "message": 1
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*",
+          "endsPattern": "Now listening on: http://localhost:5000"
+        }
+      }
     }
   ]
 }
