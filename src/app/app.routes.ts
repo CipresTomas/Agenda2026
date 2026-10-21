@@ -4,25 +4,28 @@ import { Register } from './pages/register/register';
 import { ContactList } from './pages/contact-list/contact-list';
 import { ContactDetails } from './pages/contact-details/contact-details';
 import { NewEditContact } from './pages/new-edit-contact/new-edit-contact';
-import { authGuard } from './auth.guard';
+import { soloPublicGuard } from './guards/solo-public-guard';
+import { soloUserGuard } from './guards/solo-user-guard';
 export const routes: Routes = [
   {
     path: 'login',
     component: Login,
+    canActivate: [soloPublicGuard],
   },
   {
     path: 'register',
     component: Register,
+    canActivate: [soloPublicGuard],
   },
   {
     path: 'contacts',
     component: ContactList,
-    canActivate: [authGuard],
+    canActivate: [soloUserGuard],
   },
   {
     path: 'contacts/create',
     component: NewEditContact,
-    canActivate: [authGuard],
+    canActivate: [soloUserGuard],
   },
   {
     path: 'contacts/new',
@@ -35,17 +38,16 @@ export const routes: Routes = [
   {
     path: 'contacts/:idContacto/edit',
     component: NewEditContact,
-    canActivate: [authGuard],
+    canActivate: [soloUserGuard],
   },
   {
     path: '',
-    redirectTo: 'login',
+    redirectTo: 'contacts',
     pathMatch: 'full',
-
   },
   {
     path: 'contacts/:idContacto',
     component: ContactDetails,
-    canActivate: [authGuard],
-  }
+    canActivate: [soloUserGuard],
+  },
 ];
