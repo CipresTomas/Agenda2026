@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { form, FormField } from '@angular/forms/signals';
+import { email, form, FormField, minLength, required } from '@angular/forms/signals';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 @Component({
@@ -10,20 +10,31 @@ import { AuthService } from '../../services/auth.service';
 })
 export class Login {
   readonly loginModel = signal({ email: '', password: '' });
-  readonly loginForm = form(this.loginModel);
+  readonly loginForm = form(this.loginModel, (schema) => {
+    required(schema.email);
+    email(schema.email);
+    required(schema.password);
+    minLength(schema.password, 8);
+  });
   readonly errorLogin = signal(false);
 
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
-  iniciarSesion(): void {
+  async iniciarSesion(): Promise<void> {
     this.errorLogin.set(false);
-    const { email, password } = this.loginModel();
-    if (!email || !password || !this.authService.iniciarSesion(email, password)) {
+    const credentials = this.loginModel();
+    if (!credentials.email || !credentials.password) {
       this.errorLogin.set(true);
       return;
     }
 
-    this.router.navigate(['/contact-list']);
+    const autenticado = await this.authService.iniciarSesion(credentials);
+    if (!autenticado) {
+      this.errorLogin.set(true);
+      return;
+    }
+
+    await this.router.navigate(['/contacts']);
   }
 }

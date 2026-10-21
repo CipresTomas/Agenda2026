@@ -9,17 +9,22 @@
         }
         <p class="subtitle">Completá los datos de tu contacto</p>
       </div>
-      <a routerLink="/contact-list">Volver</a>
+      <a routerLink="/contacts">Volver</a>
+      <button type="button" (click)="cerrarSesion()">Cerrar sesión</button>
     </header>
 
     <form class="contact-form" (submit)="guardar($event)">
       <div class="field-group">
-        <label for="name">Nombre*</label>
-        <input id="name" type="text" [formField]="contactForm.name" />
+        <label for="firstName">Nombre*</label>
+        <input id="firstName" type="text" [formField]="contactForm.firstName" />
       </div>
       <div class="field-group">
-        <label for="phone">Telefono*</label>
-        <input id="phone" type="tel" [formField]="contactForm.phone" />
+        <label for="lastName">Apellido</label>
+        <input id="lastName" type="text" [formField]="contactForm.lastName" />
+      </div>
+      <div class="field-group">
+        <label for="number">Telefono</label>
+        <input id="number" type="tel" [formField]="contactForm.number" />
       </div>
       <div class="field-group">
         <label for="email">Email</label>
@@ -34,8 +39,12 @@
         <input id="company" type="text" [formField]="contactForm.company" />
       </div>
       <div class="field-group">
-        <label for="imgurl">URL de imagen</label>
-        <input id="imgurl" type="url" [formField]="contactForm.imgurl" />
+        <label for="image">URL de imagen</label>
+        <input id="image" type="url" [formField]="contactForm.image" />
+      </div>
+      <div class="field-group">
+        <label for="description">Descripción</label>
+        <input id="description" type="text" [formField]="contactForm.description" />
       </div>
       <div class="field-group">
         <label for="image-file">O seleccioná una imagen</label>
@@ -48,7 +57,10 @@
         <input type="checkbox" [formField]="contactForm.isFavorite" /> Favorito
       </label>
       @if (error()) {
-        <p class="empty-state">Completá el nombre y el teléfono.</p>
+        <p class="empty-state">Completá el nombre.</p>
+      }
+      @if (apiError()) {
+        <p class="empty-state">No se pudo guardar el contacto. Revisá la conexión e intentá nuevamente.</p>
       }
       <button type="submit">{{ contacto ? 'Editar' : 'Agregar' }}</button>
     </form>

@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { form, FormField } from '@angular/forms/signals';
+import { email, form, FormField, minLength, required } from '@angular/forms/signals';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
@@ -10,8 +10,16 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './register.html',
 })
 export class Register {
-  readonly registerModel = signal({ name: '', email: '', password: '', password2: '' });
-  readonly registerForm = form(this.registerModel);
+  readonly registerModel = signal({ firstName: '', lastName: '', email: '', password: '', password2: '' });
+  readonly registerForm = form(this.registerModel, (schema) => {
+    required(schema.firstName);
+    required(schema.lastName);
+    required(schema.email);
+    email(schema.email);
+    required(schema.password);
+    minLength(schema.password, 8);
+    required(schema.password2);
+  });
   readonly errorRegister = signal(false);
 
   constructor(
@@ -19,15 +27,25 @@ export class Register {
     private router: Router,
   ) {}
 
-  registrarse(): void {
+  async registrarse(): Promise<void> {
     this.errorRegister.set(false);
-    const { name, email, password, password2 } = this.registerModel();
-    if (!name || !email || !password || password !== password2 || password.length < 4) {
+    const { firstName, lastName, email, password, password2 } = this.registerModel();
+    if (!firstName || !lastName || !email || !password || password !== password2 || password.length < 8) {
       this.errorRegister.set(true);
       return;
     }
 
-    this.authService.registrar({ name: name.trim(), email: email.trim(), password });
-    this.router.navigate(['/login']);
+    const registrado = await this.authService.registrar({
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+      email: email.trim(),
+      password,
+    });
+    if (!registrado) {
+      this.errorRegister.set(true);
+      return;
+    }
+
+    await this.router.navigate(['/login']);
   }
 }

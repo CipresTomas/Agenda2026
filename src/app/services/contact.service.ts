@@ -1,91 +1,124 @@
-import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject, signal } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
+import {
+  Contact,
+  ContactDto,
+  ContactFormModel,
+  ContactWithGroupIdsDto,
+  CreateAndUpdateContactDto,
+} from '../interfaces/contact';
+import { API_BASE_URL } from './api-config';
+import { AuthService } from './auth.service';
 
-export interface Contact {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  imgurl: string;
-  address: string;
-  company: string;
-  isFavorite: boolean;
-}
+export type { Contact } from '../interfaces/contact';
 
 @Injectable({ providedIn: 'root' })
 export class ContactService {
-  private readonly storageKey = 'agenda-contactos';
-  private readonly storage = typeof localStorage === 'undefined' ? undefined : localStorage;
-  readonly contactos: Contact[] = this.cargarContactos();
+  private readonly http = inject(HttpClient);
+  private readonly authService = inject(AuthService);
+  readonly contactos = signal<Contact[]>([]);
 
-  agregar(contacto: Omit<Contact, 'id'>): Contact {
-    const nuevoContacto: Contact = {
-      id: this.siguienteId(),
-      ...contacto,
-    };
+  async cargar(): Promise<Contact[]> {
+    const response = await firstValueFrom(
+      this.http.get<ContactWithGroupIdsDto[]>(`${API_BASE_URL}/contacts`, {
+        headers: this.authService.authorizationHeaders,
+      }),
+    );
+    const contactos = response.map((contacto) => this.normalizar(contacto));
+    this.contactos.set(contactos);
+    return contactos;
+  }
 
-    this.contactos.push(nuevoContacto);
-    this.guardarContactos();
+  async obtenerPorId(id: number): Promise<Contact | undefined> {
+    const response = await firstValueFrom(
+      this.http.get<ContactWithGroupIdsDto | null>(`${API_BASE_URL}/contacts/${id}`, {
+        headers: this.authService.authorizationHeaders,
+      }),
+    );
+    return response ? this.normalizar(response) : undefined;
+  }
+
+  async agregar(contacto: ContactFormModel): Promise<Contact> {
+    const response = await firstValueFrom(
+      this.http.post<ContactDto>(`${API_BASE_URL}/contacts`, this.toDto(contacto), {
+        headers: this.authService.authorizationHeaders,
+      }),
+    );
+    const nuevoContacto = this.normalizar({ ...response, groupIds: [] });
+    this.contactos.update((actuales) => [...actuales, nuevoContacto]);
     return nuevoContacto;
   }
 
-  obtenerPorId(id: number): Contact | undefined {
-    return this.contactos.find((contacto) => contacto.id === id);
-  }
-
-  editar(contacto: Contact): Contact | undefined {
-    const index = this.contactos.findIndex((actual) => actual.id === contacto.id);
-    if (index === -1) {
-      return undefined;
-    }
-
-    this.contactos[index] = contacto;
-    this.guardarContactos();
+  async editar(contacto: Contact): Promise<Contact> {
+    await firstValueFrom(
+      this.http.put<void>(`${API_BASE_URL}/contacts/${contacto.id}`, this.toDto(contacto), {
+        headers: this.authService.authorizationHeaders,
+      }),
+    );
+    this.contactos.update((actuales) =>
+      actuales.map((actual) => (actual.id === contacto.id ? contacto : actual)),
+    );
     return contacto;
   }
 
-  eliminar(id: number): boolean {
-    const cantidadAnterior = this.contactos.length;
-    const contactosRestantes = this.contactos.filter((contacto) => contacto.id !== id);
-    this.contactos.splice(0, this.contactos.length, ...contactosRestantes);
-    this.guardarContactos();
-    return this.contactos.length < cantidadAnterior;
+  async eliminar(id: number): Promise<void> {
+    await firstValueFrom(
+      this.http.delete<void>(`${API_BASE_URL}/contacts/${id}`, {
+        headers: this.authService.authorizationHeaders,
+      }),
+    );
+    this.contactos.update((actuales) => actuales.filter((contacto) => contacto.id !== id));
   }
 
-  alternarFavorito(id: number): Contact | undefined {
-    const contacto = this.obtenerPorId(id);
+  async alternarFavorito(id: number): Promise<Contact> {
+    await firstValueFrom(
+      this.http.post(`${API_BASE_URL}/contacts/${id}/favorite`, null, {
+        headers: this.authService.authorizationHeaders,
+        responseType: 'text',
+      }),
+    );
+    const contacto = await this.obtenerPorId(id);
     if (!contacto) {
-      return undefined;
+      throw new Error('No se pudo recuperar el contacto actualizado.');
     }
-
-    contacto.isFavorite = !contacto.isFavorite;
-    this.guardarContactos();
+    this.actualizarEnLista(contacto);
     return contacto;
   }
 
-  private cargarContactos(): Contact[] {
-    const guardados = this.storage?.getItem(this.storageKey);
-    if (!guardados) {
-      return [];
-    }
+  private toDto(contacto: ContactFormModel): CreateAndUpdateContactDto {
+    return {
+      firstName: contacto.firstName,
+      lastName: contacto.lastName,
+      address: contacto.address,
+      number: contacto.number,
+      email: contacto.email,
+      image: contacto.image,
+      company: contacto.company,
+      description: contacto.description,
+    };
+  }
 
-    const contactos = JSON.parse(guardados) as Partial<Contact>[];
-    return contactos.map((contacto) => ({
-      id: contacto.id ?? 0,
-      name: contacto.name ?? '',
-      email: contacto.email ?? '',
-      phone: contacto.phone ?? '',
-      imgurl: contacto.imgurl ?? '',
+  private normalizar(contacto: ContactDto & { groupIds?: number[] }): Contact {
+    return {
+      id: contacto.id,
+      firstName: contacto.firstName,
+      lastName: contacto.lastName,
       address: contacto.address ?? '',
+      number: contacto.number ?? '',
+      email: contacto.email ?? '',
+      image: contacto.image ?? '',
       company: contacto.company ?? '',
-      isFavorite: contacto.isFavorite ?? false,
-    }));
+      description: contacto.description ?? '',
+      userId: contacto.userId,
+      isFavorite: contacto.isFavorite,
+      groupIds: contacto.groupIds ?? [],
+    };
   }
 
-  private guardarContactos(): void {
-    this.storage?.setItem(this.storageKey, JSON.stringify(this.contactos));
-  }
-
-  private siguienteId(): number {
-    return this.contactos.reduce((mayor, contacto) => Math.max(mayor, contacto.id), 0) + 1;
+  private actualizarEnLista(contacto: Contact): void {
+    this.contactos.update((actuales) =>
+      actuales.map((actual) => (actual.id === contacto.id ? contacto : actual)),
+    );
   }
 }

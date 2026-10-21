@@ -1,41 +1,56 @@
-import { Injectable } from '@angular/core';
-
-interface StoredUser {
-  name: string;
-  email: string;
-  password: string;
-}
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
+import { AuthenticationRequestDto, CreateAndUpdateUserDto, UserDto } from '../interfaces/user';
+import { API_BASE_URL } from './api-config';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly userKey = 'agenda-user';
-  private readonly sessionKey = 'agenda-session';
+  private readonly tokenKey = 'agenda-token';
   private readonly storage = typeof localStorage === 'undefined' ? undefined : localStorage;
+  private readonly http = inject(HttpClient);
 
-  registrar(user: StoredUser): boolean {
-    this.storage?.setItem(this.userKey, JSON.stringify(user));
-    return true;
-  }
-
-  iniciarSesion(email: string, password: string): boolean {
-    const userJson = this.storage?.getItem(this.userKey);
-    if (!userJson) {
+  async registrar(user: CreateAndUpdateUserDto): Promise<boolean> {
+    try {
+      await firstValueFrom(this.http.post<UserDto>(`${API_BASE_URL}/users`, user));
+      return true;
+    } catch {
       return false;
     }
+  }
 
-    const user = JSON.parse(userJson) as StoredUser;
-    const valido = user.email === email.trim() && user.password === password;
-    if (valido) {
-      this.storage?.setItem(this.sessionKey, 'true');
+  async iniciarSesion(credentials: AuthenticationRequestDto): Promise<boolean> {
+    try {
+      const response = await firstValueFrom(
+        this.http.post(`${API_BASE_URL}/authentication/authenticate`, credentials, {
+          responseType: 'text',
+        }),
+      );
+      const token = response.trim().replace(/^"(.*)"$/, '$1');
+      if (!token) {
+        return false;
+      }
+
+      this.storage?.setItem(this.tokenKey, token);
+      return true;
+    } catch {
+      return false;
     }
-    return valido;
   }
 
   cerrarSesion(): void {
-    this.storage?.removeItem(this.sessionKey);
+    this.storage?.removeItem(this.tokenKey);
   }
 
   estaAutenticado(): boolean {
-    return this.storage?.getItem(this.sessionKey) === 'true';
+    return Boolean(this.token);
+  }
+
+  get token(): string {
+    return this.storage?.getItem(this.tokenKey) ?? '';
+  }
+
+  get authorizationHeaders(): HttpHeaders {
+    return new HttpHeaders({ Authorization: `Bearer ${this.token}` });
   }
 }

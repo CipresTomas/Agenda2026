@@ -15,15 +15,22 @@ export const routes: Routes = [
     component: Register,
   },
   {
-    path: 'contact-list',
+    path: 'contacts',
     component: ContactList,
     canActivate: [authGuard],
-
+  },
+  {
+    path: 'contacts/create',
+    component: NewEditContact,
+    canActivate: [authGuard],
   },
   {
     path: 'contacts/new',
-    component: NewEditContact,
-    canActivate: [authGuard],
+    redirectTo: 'contacts/create',
+  },
+  {
+    path: 'contact-list',
+    redirectTo: 'contacts',
   },
   {
     path: 'contacts/:idContacto/edit',

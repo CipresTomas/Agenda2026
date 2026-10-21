@@ -1,20 +1,23 @@
 
-@if (contacto; as contactoSeleccionado) {
+@if (cargando()) {
+	<main class="contact-details" role="status">Cargando contacto...</main>
+} @else if (contacto(); as contactoSeleccionado) {
 	<main class="contact-details">
 		<header class="details-header">
-			<a class="back-link" routerLink="/contact-list">← Volver a contactos</a>
+			<a class="back-link" routerLink="/contacts">← Volver a contactos</a>
 			<span class="contact-number">Contacto #{{ contactoSeleccionado.id }}</span>
+			<button type="button" (click)="cerrarSesion()">Cerrar sesión</button>
 		</header>
 
 		<section class="profile">
-			@if (contactoSeleccionado.imgurl && !imagenError) {
-				<img class="contact-image" [src]="contactoSeleccionado.imgurl" [alt]="'Foto de ' + contactoSeleccionado.name" (error)="mostrarAvatar()" />
+			@if (contactoSeleccionado.image && !imagenError) {
+				<img class="contact-image" [src]="contactoSeleccionado.image" [alt]="'Foto de ' + contactoSeleccionado.firstName" (error)="mostrarAvatar()" />
 			} @else {
-				<div class="avatar">{{ contactoSeleccionado.name.charAt(0).toUpperCase() }}</div>
+				<div class="avatar">{{ contactoSeleccionado.firstName.charAt(0).toUpperCase() }}</div>
 			}
 			<div class="profile-copy">
 				<p class="eyebrow">DETALLE DEL CONTACTO</p>
-				<h1>{{ contactoSeleccionado.name }}</h1>
+				<h1>{{ contactoSeleccionado.firstName }} {{ contactoSeleccionado.lastName }}</h1>
 
 				@if (contactoSeleccionado.isFavorite) {
 					<span class="favorite-badge">⭐ Favorito</span>
@@ -23,13 +26,16 @@
 		</section>
 
 		<section class="contact-info">
+			@if (error()) {
+				<p class="empty-state" role="alert">No se pudo actualizar el contacto. Revisá la conexión e intentá nuevamente.</p>
+			}
 			<div class="info-item">
 				<span class="info-label">Email</span>
 				<strong>{{ contactoSeleccionado.email || 'Sin email' }}</strong>
 			</div>
 			<div class="info-item">
 				<span class="info-label">Telefono</span>
-				<strong>{{ contactoSeleccionado.phone || 'Sin telefono' }}</strong>
+				<strong>{{ contactoSeleccionado.number || 'Sin telefono' }}</strong>
 			</div>
 			@if (contactoSeleccionado.address) {
 				<div class="info-item">
@@ -41,6 +47,12 @@
 				<div class="info-item">
 					<span class="info-label">Empresa</span>
 					<strong>{{ contactoSeleccionado.company }}</strong>
+				</div>
+			}
+			@if (contactoSeleccionado.description) {
+				<div class="info-item">
+					<span class="info-label">Descripción</span>
+					<strong>{{ contactoSeleccionado.description }}</strong>
 				</div>
 			}
 		</section>
@@ -55,8 +67,11 @@
 	</main>
 } @else {
 	<main class="contact-details empty-details">
-		<h1>Contacto no encontrado</h1>
-		<a class="back-link" routerLink="/contact-list">Volver a contactos</a>
+		<h1>{{ error() ? 'No se pudo cargar el contacto' : 'Contacto no encontrado' }}</h1>
+		@if (error()) {
+			<p>Revisá la conexión con la agenda e intentá nuevamente.</p>
+		}
+		<a class="back-link" routerLink="/contacts">Volver a contactos</a>
 	</main>
 }
 <!-- tengo entendido que hiciste el delete distinto  -->

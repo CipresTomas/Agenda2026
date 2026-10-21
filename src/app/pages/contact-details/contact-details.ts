@@ -1,6 +1,7 @@
-import { Component, input, OnInit } from '@angular/core';
+import { Component, input, OnInit, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Contact, ContactService } from '../../services/contact.service';
+import { AuthService } from '../../services/auth.service';
 import Swal from 'sweetalert2'
 
 @Component({
@@ -11,61 +12,79 @@ import Swal from 'sweetalert2'
 })
 export class ContactDetails implements OnInit {
   idContacto = input<string>();
-  contacto: Contact | undefined;
+  readonly contacto = signal<Contact | undefined>(undefined);
   imagenError = false;
+  readonly cargando = signal(true);
+  readonly error = signal(false);
 
   constructor(
     private contactService: ContactService,
+    private authService: AuthService,
     private router: Router,
   ) { }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     const id = this.idContacto();
-    this.contacto = id ? this.contactService.obtenerPorId(Number(id)) : undefined;
+    if (!id) {
+      this.cargando.set(false);
+      return;
+    }
+
+    try {
+      this.contacto.set(await this.contactService.obtenerPorId(Number(id)));
+    } catch {
+      this.error.set(true);
+    } finally {
+      this.cargando.set(false);
+    }
   }
 
   mostrarAvatar(): void {
     this.imagenError = true;
   }
 
-  alternarFavorito(): void {
-    this.contacto = this.contactService.alternarFavorito(Number(this.idContacto()));
+  cerrarSesion(): void {
+    this.authService.cerrarSesion();
+    void this.router.navigate(['/login']);
   }
 
-  eliminar(): void {
-    this.contactService.eliminar(Number(this.idContacto()));
-    this.router.navigate(['/contact-list']);
-   const swalWithBootstrapButtons = Swal.mixin({
-  customClass: {
-    confirmButton: "btn btn-success",
-    cancelButton: "btn btn-danger"
-  },
-  buttonsStyling: false
-});
-swalWithBootstrapButtons.fire({
-  title: "Are you sure?",
-  text: "You won't be able to revert this!",
-  icon: "warning",
-  showCancelButton: true,
-  confirmButtonText: "Yes, delete it!",
-  cancelButtonText: "No, cancel!",
-  reverseButtons: true
-}).then((result) => {
-  if (result.isConfirmed) swalWithBootstrapButtons.fire({
-    title: "Deleted!",
-    text: "Your file has been deleted.",
-    icon: "success"
-  });
-  else if (result.dismiss === Swal.DismissReason.cancel)
- /* Read more about handling dismissals below */
-  swalWithBootstrapButtons.fire({
-    title: "Cancelled",
-    text: "Your imaginary file is safe :)",
-    icon: "error"
-  });
-});
-};
+  async alternarFavorito(): Promise<void> {
+    try {
+      this.contacto.set(await this.contactService.alternarFavorito(Number(this.idContacto())));
+    } catch {
+      this.error.set(true);
+    }
   }
+
+  async eliminar(): Promise<void> {
+    const result = await Swal.fire({
+      title: '¿Eliminar contacto?',
+      text: 'Esta acción no se puede deshacer.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Eliminar',
+      cancelButtonText: 'Cancelar',
+      reverseButtons: true,
+    });
+    if (!result.isConfirmed) {
+      return;
+    }
+
+    try {
+      await this.contactService.eliminar(Number(this.idContacto()));
+      await this.router.navigate(['/contacts']);
+      void Swal.fire({
+        title: 'Contacto eliminado',
+        icon: 'success',
+        timer: 1600,
+        showConfirmButton: false,
+      });
+    } catch {
+      this.error.set(true);
+      void Swal.fire('No se pudo eliminar el contacto', 'Intentá nuevamente.', 'error');
+    }
+  }
+}
 
 // mucho void
 //mezcle idiomas :(

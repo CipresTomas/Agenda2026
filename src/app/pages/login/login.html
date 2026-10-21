@@ -7,7 +7,7 @@
   @if (errorLogin()) {
     <p>Datos incorrectos. Revisá tu correo y contraseña.</p>
   }
-  <button type="submit">Iniciar sesión</button>
+  <button type="submit" [disabled]="loginForm().invalid()">Iniciar sesión</button>
 
   <p>¿No tenés una cuenta? <a routerLink="/register">Registrate acá</a></p>
   </form>

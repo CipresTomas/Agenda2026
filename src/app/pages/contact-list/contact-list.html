@@ -5,22 +5,30 @@
 				<h1>Contactos</h1>
 			  	<p class="subtitle">Tu agenda personal</p>
 			</div>
-			<a routerLink="/contacts/new">Nuevo contacto +</a>
+			<a routerLink="/contacts/create">Nuevo contacto +</a>
 			<button type="button" (click)="cerrarSesion()">Cerrar sesión</button>
 		</header>
 
-		@if (contactos.length > 0) {
+		@if (error()) {
+			<p class="empty-state">No se pudo conectar con la agenda. Revisá que el servidor esté disponible e intentá nuevamente.</p>
+			<button type="button" (click)="cargarContactos()">Reintentar</button>
+		} @else if (cargando()) {
+			<p class="empty-state" role="status">Cargando contactos...</p>
+		} @else if (contactos().length > 0) {
 			<h2 class="list-title">Contactos agregados</h2>
 			<div class="contact-grid">
-				@for (contacto of contactos; track contacto.id) {
+				@for (contacto of contactos(); track contacto.id) {
 					<article class="contact-card">
-						<div class="avatar">{{ contacto.name.charAt(0).toUpperCase() }}</div>
-						<div>
-							<h3><a [routerLink]="['/contacts', contacto.id]">{{ contacto.name }}</a> @if (contacto.isFavorite) { <span>⭐</span> }</h3>
+						<div class="avatar">{{ contacto.firstName.charAt(0).toUpperCase() }}</div>
+						<div class="contact-copy">
+							<h3><a [routerLink]="['/contacts', contacto.id]">{{ contacto.firstName }} {{ contacto.lastName }}</a> @if (contacto.isFavorite) { <span>⭐</span> }</h3>
 							<p>{{ contacto.email }}</p>
-							<p>{{ contacto.phone }}</p>
+							<p>{{ contacto.number }}</p>
 						</div>
-						<a [routerLink]="['/contacts', contacto.id, 'edit']">Editar</a>
+						<div class="contact-actions">
+							<a [routerLink]="['/contacts', contacto.id, 'edit']">Editar</a>
+							<button type="button" class="delete-contact-button" [attr.aria-label]="'Eliminar ' + contacto.firstName" (click)="eliminarContacto(contacto.id)">Eliminar</button>
+						</div>
 					</article>
 				}
 			</div>

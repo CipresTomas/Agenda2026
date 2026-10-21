@@ -136,10 +136,35 @@ button:focus-visible {
 .contact-card {
 	display: flex;
 	align-items: flex-start;
+	justify-content: space-between;
 	gap: 0.85rem;
 	padding: 1rem;
 	border-bottom: 1px solid #ddd6fe;
 	color: #24113f;
+}
+
+.contact-copy {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.contact-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.contact-actions a {
+	color: #7c3aed;
+	font-weight: 800;
+}
+
+.contact-actions .delete-contact-button {
+	width: auto;
+	padding: 0.55rem 0.7rem;
+	background: #be123c;
+	color: #ffffff;
+	font-size: 0.8rem;
 }
 
 .avatar {
@@ -179,5 +204,9 @@ button:focus-visible {
 
 	button {
 		width: 100%;
+	}
+
+	.contact-actions .delete-contact-button {
+		width: auto;
 	}
 }
