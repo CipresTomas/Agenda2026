@@ -14,20 +14,18 @@ form {
 	flex-direction: column;
 	gap: 0.75rem;
 	padding: 2.25rem;
-	background: #7c3aed;
-	color: #ffffff;
-	border-radius: 1.25rem;
-	box-shadow: 0 0.5rem 1rem rgba(76, 29, 149, 0.2), 0 1.5rem 3rem rgba(76, 29, 149, 0.3);
+	border: 1px solid #ddd6fe;
+	border-radius: 0.75rem;
+	background: #ffffff;
+	color: #24113f;
+	box-shadow: 0 0.5rem 1.5rem rgba(36, 17, 63, 0.08);
 }
 
 h1 {
 	margin: 0 0 1rem;
 	font-size: 2.5rem;
 	text-align: center;
-	background: linear-gradient(100deg, #fef08a, #fb7185);
-	-webkit-background-clip: text;
-	background-clip: text;
-	color: transparent;
+	color: #4c1d95;
 }
 
 label {
@@ -46,8 +44,8 @@ input {
 
 input:focus {
 	outline: none;
-	border-color: #fef08a;
-	box-shadow: 0 0 0 3px rgba(254, 240, 138, 0.25);
+	border-color: #7c3aed;
+	box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
 }
 
 button {
@@ -55,20 +53,19 @@ button {
 	padding: 0.8rem 1rem;
 	border: 0;
 	border-radius: 0.5rem;
-	background: linear-gradient(100deg, #fef08a, #fb7185);
-	color: #4c1d95;
+	background: #7c3aed;
+	color: #ffffff;
 	font: inherit;
-	font-weight: 800;
+	font-weight: 700;
 	cursor: pointer;
-	transition: transform 160ms ease, box-shadow 160ms ease;
+	transition: background-color 160ms ease;
 }
 
 button:hover {
-	transform: translateY(-2px);
-	box-shadow: 0 0.5rem 1rem rgba(76, 29, 149, 0.3);
+	background: #5b21b6;
 }
 
 button:focus-visible {
-	outline: 3px solid #fef08a;
+	outline: 3px solid #7c3aed;
 	outline-offset: 3px;
 }

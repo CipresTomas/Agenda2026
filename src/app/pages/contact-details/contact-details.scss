@@ -40,9 +40,8 @@
   text-decoration: none;
 }
 
-.back-link:hover,
-.edit-button:hover {
-  color: #fb7185;
+.back-link:hover {
+  color: #43366b;
 }
 
 .contact-number,
@@ -67,11 +66,10 @@
   flex: 0 0 auto;
   place-items: center;
   border-radius: 50%;
-  background: linear-gradient(135deg, #fef08a, #fb7185);
-  color: #4c1d95;
+  background: #7c3aed;
+  color: #ffffff;
   font-size: 2rem;
-  font-weight: 800;
-  box-shadow: 0 0.75rem 1.5rem rgba(251, 113, 133, 0.25);
+  font-weight: 700;
 }
 
 .contact-image {
@@ -79,10 +77,9 @@
   width: 5rem;
   height: 5rem;
   flex: 0 0 auto;
-  border: 4px solid #fef08a;
+  border: 3px solid #ddd6fe;
   border-radius: 50%;
   object-fit: cover;
-  box-shadow: 0 0.75rem 1.5rem rgba(251, 113, 133, 0.25);
 }
 
 .eyebrow {
@@ -92,10 +89,7 @@
 h1 {
   margin: 0;
   font-size: clamp(2rem, 6vw, 3.25rem);
-  background: linear-gradient(100deg, #7c3aed, #fb7185);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: #4c1d95;
 }
 
 .favorite-badge {
@@ -153,8 +147,12 @@ button,
 
 .favorite-button,
 .edit-button {
-  background: linear-gradient(100deg, #fef08a, #fb7185);
-  color: #4c1d95;
+  background: #7c3aed;
+  color: #ffffff;
+}
+
+.edit-button:hover {
+  color: #ffffff;
 }
 
 .delete-button {
@@ -164,8 +162,7 @@ button,
 
 button:hover,
 .edit-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0.5rem 1rem rgba(76, 29, 149, 0.2);
+  background: #5b21b6;
 }
 
 .empty-details {

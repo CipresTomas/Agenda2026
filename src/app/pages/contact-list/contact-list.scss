@@ -48,10 +48,7 @@ p {
 h1 {
 	margin-bottom: 0.5rem;
 	font-size: clamp(2.25rem, 6vw, 3.5rem);
-	background: linear-gradient(100deg, #fef08a, #fb7185);
-	-webkit-background-clip: text;
-	background-clip: text;
-	color: transparent;
+	color: #4c1d95;
 }
 
 .subtitle,
@@ -103,8 +100,8 @@ button {
 	padding: 0.8rem 1rem;
 	border: 0;
 	border-radius: 0.5rem;
-	background: linear-gradient(100deg, #fef08a, #fb7185);
-	color: #4c1d95;
+	background: #7c3aed;
+	color: #ffffff;
 	font: inherit;
 	font-weight: 800;
 	white-space: nowrap;
@@ -113,8 +110,7 @@ button {
 }
 
 button:hover {
-	transform: translateY(-2px);
-	box-shadow: 0 0.5rem 1rem rgba(76, 29, 149, 0.3);
+	background: #5b21b6;
 }
 
 button:focus-visible {
@@ -174,7 +170,7 @@ button:focus-visible {
 	height: 2.5rem;
 	flex: 0 0 auto;
 	border-radius: 50%;
-	background: #fb7185;
+	background: #7c3aed;
 	color: #ffffff;
 	font-size: 1.1rem;
 	font-weight: 800;
@@ -210,3 +206,4 @@ button:focus-visible {
 		width: auto;
 	}
 }
+//mejorar colores28/10
