@@ -8,7 +8,7 @@ import { AuthService } from '../../services/auth.service';
 @Component({
   imports: [FormField, RouterModule],
   selector: 'app-new-edit-contact',
-  styleUrl: '../contact-list/contact-list.scss',
+  styleUrls: ['./new-edit-contact.scss', '../contact-list/contact-list.scss'],
   templateUrl: './new-edit-contact.html',
 })
 export class NewEditContact implements OnInit {

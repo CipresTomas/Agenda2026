@@ -4,8 +4,7 @@
 } @else if (contacto(); as contactoSeleccionado) {
 	<main class="contact-details">
 		<header class="details-header">
-			<a class="back-link" routerLink="/contacts">← Volver a contactos</a>
-			<span class="contact-number">Contacto #{{ contactoSeleccionado.id }}</span>
+			<a class="back-link action-link" routerLink="/contacts">← Volver a contactos</a>
 			<button type="button" (click)="cerrarSesion()">Cerrar sesión</button>
 		</header>
 
@@ -71,8 +70,6 @@
 		@if (error()) {
 			<p>Revisá la conexión con la agenda e intentá nuevamente.</p>
 		}
-		<a class="back-link" routerLink="/contacts">Volver a contactos</a>
+		<a class="back-link action-link" routerLink="/contacts">Volver a contactos</a>
 	</main>
 }
-<!-- tengo entendido que hiciste el delete distinto  -->
-

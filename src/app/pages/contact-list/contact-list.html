@@ -5,7 +5,7 @@
 				<h1>Contactos</h1>
 			  	<p class="subtitle">Tu agenda personal</p>
 			</div>
-			<a routerLink="/contacts/create">Nuevo contacto +</a>
+			<a class="action-link" routerLink="/contacts/create">Nuevo contacto +</a>
 			<button type="button" (click)="cerrarSesion()">Cerrar sesión</button>
 		</header>
 
@@ -26,7 +26,7 @@
 							<p>{{ contacto.number }}</p>
 						</div>
 						<div class="contact-actions">
-							<a [routerLink]="['/contacts', contacto.id, 'edit']">Editar</a>
+							<a class="action-link" [routerLink]="['/contacts', contacto.id, 'edit']">Editar</a>
 							<button type="button" class="delete-contact-button" [attr.aria-label]="'Eliminar ' + contacto.firstName" (click)="eliminarContacto(contacto.id)">Eliminar</button>
 						</div>
 					</article>

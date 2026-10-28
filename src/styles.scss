@@ -1,5 +1,4 @@
-/* You can add global styles to this file, and also import other style files */
-/* Reset universal para SCSS */
+
 *,
 *::before,
 *::after {
@@ -33,6 +32,34 @@ a:hover {
   text-decoration: underline;
 }
 
+a.action-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.5rem;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid #6d28d9;
+  border-radius: 0.5rem;
+  background: #7c3aed;
+  color: #ffffff;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+a.action-link:hover {
+  border-color: #5b21b6;
+  background: #5b21b6;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+a.action-link:focus-visible {
+  outline: 3px solid rgba(124, 58, 237, 0.35);
+  outline-offset: 2px;
+}
+
 p, h1, h2, h3, h4, h5, h6 {
   overflow-wrap: break-word;
 }
+//esto deberia estar en cada seccion de la app, pero por ahora lo dejo aca
